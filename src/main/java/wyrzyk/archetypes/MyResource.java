@@ -1,4 +1,4 @@
-package atlassian.connect.plugin;
+package wyrzyk.archetypes;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
