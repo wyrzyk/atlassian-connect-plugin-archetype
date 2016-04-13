@@ -8,7 +8,11 @@
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>atlassian-connect-plugin</name>
-
+    <description>Plugin description</description>
+    <organization>
+        <name>Example, Inc.</name>
+        <url>http://example.com</url>
+    </organization>
     <build>
         <finalName>atlassian-connect-plugin</finalName>
         <plugins>
@@ -21,6 +25,36 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <echo message="Updating atlassian-connect.json ..."/>
+                                <tstamp>
+                                    <format property="BUILD_TIME" pattern="yyyy-MM-dd HH:mm:ss"/>
+                                </tstamp>
+                                <copy file="atlassian-connect.json" tofile="src/main/webapp/atlassian-connect.json" overwrite="true"/>
+                                <replace file="src/main/webapp/atlassian-connect.json">
+                                    <replacefilter token="@name@" value="${project.name}"/>
+                                    <replacefilter token="@description@" value="${project.description}"/>
+                                    <replacefilter token="@pluginKey@" value="${project.groupId}.${project.artifactId}"/>
+                                    <replacefilter token="@vendorName@" value="${project.organization.name}"/>
+                                    <replacefilter token="@vendorUrl@" value="${project.organization.url}"/>
+                                </replace>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
