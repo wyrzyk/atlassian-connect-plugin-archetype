@@ -15,4 +15,12 @@
         <servlet-name>Jersey Web Application</servlet-name>
         <url-pattern>/webapi/*</url-pattern>
     </servlet-mapping>
+    <filter>
+        <filter-name>JwtAtlassianAuthenticationFilter</filter-name>
+        <filter-class>wyrzyk.archetypes.JwtAtlassianAuthenticationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>JwtAtlassianAuthenticationFilter</filter-name>
+        <url-pattern>/webapi/*</url-pattern>
+    </filter-mapping>
 </web-app>
