@@ -1,4 +1,4 @@
-package wyrzyk.archetypes;
+package wyrzyk.archetypes.filters;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
