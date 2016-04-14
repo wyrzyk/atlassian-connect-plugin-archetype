@@ -2,7 +2,7 @@
   "name": "@name@",
   "description": "@description@",
   "key": "@pluginKey@",
-  "baseUrl": "http://localhost:8000",
+  "baseUrl": "http://localhost:8080",
   "vendor": {
     "name": "@vendorName@",
     "url": "@vendorUrl@"
@@ -14,11 +14,11 @@
   "modules": {
     "generalPages": [
       {
-        "url": "/myresource",
-        "key": "hello-world",
+        "url": "/docs.jsp",
+        "key": "docs",
         "location": "system.top.navigation.bar",
         "name": {
-          "value": "Greeting"
+          "value": "Plugin documentation"
         }
       }
     ]
