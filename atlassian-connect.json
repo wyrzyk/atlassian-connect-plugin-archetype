@@ -8,7 +8,7 @@
     "url": "@vendorUrl@"
   },
   "authentication": {
-    "type": "none"
+    "type": "jwt"
   },
   "apiVersion": 1,
   "modules": {
@@ -22,5 +22,8 @@
         }
       }
     ]
+  },
+  "lifecycle": {
+    "installed": "/webapi/lifecycle/installed"
   }
 }
