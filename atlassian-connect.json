@@ -24,6 +24,6 @@
     ]
   },
   "lifecycle": {
-    "installed": "/webapi/lifecycle/installed"
+    "installed": "/lifecycle/installed"
   }
 }
