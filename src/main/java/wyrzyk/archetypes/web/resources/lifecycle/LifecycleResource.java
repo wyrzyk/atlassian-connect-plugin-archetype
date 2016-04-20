@@ -1,4 +1,4 @@
-package wyrzyk.archetypes.web.resources;
+package wyrzyk.archetypes.web.resources.lifecycle;
 
 
 import org.springframework.http.MediaType;
@@ -15,6 +15,7 @@ public class LifecycleResource {
     @RequestMapping(value = "installed",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             method = RequestMethod.POST)
+
     public ResponseEntity<Void> installed(@RequestBody LifecycleRequest lifecycleRequest) {
         return ResponseEntity.ok().build();
     }
