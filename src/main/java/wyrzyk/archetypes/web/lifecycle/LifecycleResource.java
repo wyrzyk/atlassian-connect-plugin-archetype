@@ -1,6 +1,7 @@
 package wyrzyk.archetypes.web.lifecycle;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "lifecycle")
+@RequiredArgsConstructor(onConstructor=@__({@Autowired}))
 class LifecycleResource {
     private final LifecycleService lifecycleService;
-
-    @Autowired
-    LifecycleResource(LifecycleService lifecycleService) {
-        this.lifecycleService = lifecycleService;
-    }
 
     @RequestMapping(value = "installed",
             consumes = MediaType.APPLICATION_JSON_VALUE,
