@@ -1,4 +1,4 @@
-package wyrzyk.archetypes.web.resources.lifecycle;
+package wyrzyk.archetypes.web.lifecycle;
 
 import com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
 import org.hamcrest.Matchers;
@@ -11,7 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
-import wyrzyk.archetypes.web.WebConfiguration;
+import wyrzyk.archetypes.config.WebConfiguration;
 
 import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.given;
 
@@ -32,7 +32,7 @@ public class LifecycleResourceTest {
     @Test
     public void testIfInstalledMethodReturns200or204() throws Exception {
         mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(LifecycleRequestMock.builder().key("key").build())
+                .body(LifecycleInstallRequestMock.builder().key("key").build())
                 .when()
                 .post("/lifecycle/installed")
                 .then()

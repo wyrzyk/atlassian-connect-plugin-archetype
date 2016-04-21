@@ -1,10 +1,10 @@
-package wyrzyk.archetypes.web.resources.lifecycle;
+package wyrzyk.archetypes.web.lifecycle;
 
 import lombok.Builder;
 import lombok.Value;
 
 @Value
 @Builder
-class LifecycleRequestMock {
+class LifecycleInstallRequestMock {
     String key;
 }

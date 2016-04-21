@@ -1,10 +1,12 @@
-package wyrzyk.archetypes.web.resources.lifecycle;
+package wyrzyk.archetypes.web.lifecycle;
 
-
+import lombok.Builder;
 import lombok.Value;
 
 @Value
-class LifecycleRequest {
+@Builder
+class LifecycleDto {
+    Long id;
     String key;
     String clientKey;
     String publicKey;

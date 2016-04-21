@@ -1,8 +1,7 @@
-package wyrzyk.archetypes;
+package wyrzyk.archetypes.config;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 import wyrzyk.archetypes.filters.JwtAtlassianAuthenticationFilter;
-import wyrzyk.archetypes.web.WebConfiguration;
 
 import javax.servlet.Filter;
 
