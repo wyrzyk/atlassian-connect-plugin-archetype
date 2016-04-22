@@ -61,6 +61,23 @@ public class LifecycleResourceTest {
                 .containsOnly("1");
     }
 
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testTwoPayloadsSaved() throws Exception {
+        assertThat(lifecycleRepository.count()).isZero();
+        createInstalled(prepareDefaultRequestBuilder()
+                .build());
+        createInstalled(prepareDefaultRequestBuilder()
+                .clientKey("2")
+                .build());
+        assertThat(lifecycleRepository.count())
+                .isEqualTo(2);
+        assertThat(lifecycleRepository.findAll())
+                .extracting("clientKey", String.class)
+                .contains("1", "2");
+    }
+
     private MockMvcResponse createInstalled(LifecycleInstallRequestMock request) {
         return mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(request)
