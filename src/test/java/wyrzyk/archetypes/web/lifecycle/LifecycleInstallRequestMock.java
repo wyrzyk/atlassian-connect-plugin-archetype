@@ -7,4 +7,14 @@ import lombok.Value;
 @Builder
 class LifecycleInstallRequestMock {
     String key;
+    String clientKey;
+    String publicKey;
+    String sharedSecret;
+    String serverVersion;
+    String pluginsVersion;
+    String baseUrl;
+    String productType;
+    String description;
+    String serviceEntitlementNumber;
+    String eventType;
 }
