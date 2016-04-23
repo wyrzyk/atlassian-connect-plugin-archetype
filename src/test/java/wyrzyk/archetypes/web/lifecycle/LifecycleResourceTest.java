@@ -78,6 +78,24 @@ public class LifecycleResourceTest {
                 .contains("1", "2");
     }
 
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testIfPayloadIsUpdated() throws Exception {
+        assertThat(lifecycleRepository.count()).isZero();
+        createInstalled(prepareDefaultRequestBuilder()
+                .sharedSecret("old")
+                .build());
+        createInstalled(prepareDefaultRequestBuilder()
+                .sharedSecret("new")
+                .build());
+        assertThat(lifecycleRepository.count())
+                .isEqualTo(1);
+        assertThat(lifecycleRepository.findAll())
+                .extracting("sharedSecret", String.class)
+                .contains("new");
+    }
+
     private MockMvcResponse createInstalled(LifecycleInstallRequestMock request) {
         return mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(request)
