@@ -16,7 +16,7 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @Builder
-class LifecycleInstallEntity {
+class LifecycleEntity {
     @Id
     @GeneratedValue
     private Long id;
@@ -32,8 +32,8 @@ class LifecycleInstallEntity {
     private String serviceEntitlementNumber;
     private String eventType;
 
-    static LifecycleInstallEntity fromDto(LifecycleDto lifecycleDto){
-        return LifecycleInstallEntity.builder()
+    static LifecycleEntity fromDto(LifecycleDto lifecycleDto){
+        return LifecycleEntity.builder()
                 .id(lifecycleDto.getId())
                 .baseUrl(lifecycleDto.getBaseUrl())
                 .clientKey(lifecycleDto.getClientKey())
