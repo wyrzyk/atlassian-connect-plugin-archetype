@@ -23,14 +23,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {WebConfiguration.class})
 public class LifecycleResourceTest {
-    public static final String LIFECYCLE_INSTALLED_PATH = "/lifecycle/installed";
+    private static final String LIFECYCLE_PATH = "/lifecycle";
+    private static final String LIFECYCLE_INSTALLED_PATH = LIFECYCLE_PATH + "/installed";
+    private static final String LIFECYCLE_ENABLED_PATH = LIFECYCLE_PATH + "/enabled";
+    private static final String LIFECYCLE_DISABLED_PATH = LIFECYCLE_PATH + "/disabled";
+    private static final String LIFECYCLE_UNINSTALLED_PATH = LIFECYCLE_PATH + "/uninstalled";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
     @Autowired
     private LifecycleRepository lifecycleRepository;
+    @Autowired
+    private LifecycleService lifecycleService;
 
-    protected MockMvcRequestSpecification mockMvc;
+    private MockMvcRequestSpecification mockMvc;
 
 
     @Before
@@ -96,12 +102,39 @@ public class LifecycleResourceTest {
                 .contains("new");
     }
 
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testWholeLifecycle() throws Exception {
+        assertThat(lifecycleRepository.count()).isZero();
+        final String clientKey = "clientKey";
+        final LifecycleRequestMock preparedRequest = prepareDefaultRequestBuilder()
+                .clientKey(clientKey)
+                .build();
+        createInstalled(preparedRequest);
+        assertThat(lifecycleService.isInstalled(clientKey)).isTrue();
+
+        createLifecycleRequest(LIFECYCLE_ENABLED_PATH, preparedRequest);
+        assertThat(lifecycleService.isEnabled(clientKey)).isTrue();
+
+        createLifecycleRequest(LIFECYCLE_DISABLED_PATH, preparedRequest);
+        assertThat(lifecycleService.isEnabled(clientKey)).isFalse();
+
+        createLifecycleRequest(LIFECYCLE_UNINSTALLED_PATH, preparedRequest);
+        assertThat(lifecycleService.isInstalled(clientKey)).isFalse();
+    }
+
     private MockMvcResponse createInstalled(LifecycleRequestMock request) {
+        return createLifecycleRequest(LIFECYCLE_INSTALLED_PATH, request);
+    }
+
+    private MockMvcResponse createLifecycleRequest(String resourcePath, LifecycleRequestMock request) {
         return mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(request)
                 .when()
-                .post(LIFECYCLE_INSTALLED_PATH);
+                .post(resourcePath);
     }
+
 
     private LifecycleRequestMock.LifecycleRequestMockBuilder prepareDefaultRequestBuilder() {
         return LifecycleRequestMock.builder()
