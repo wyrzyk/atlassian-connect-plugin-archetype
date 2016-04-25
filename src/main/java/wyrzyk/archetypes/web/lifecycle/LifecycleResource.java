@@ -20,7 +20,7 @@ class LifecycleResource {
     @RequestMapping(value = "installed",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             method = RequestMethod.POST)
-    public ResponseEntity<Void> installed(@RequestBody LifecycleInstallRequest lifecycleRequest) {
+    public ResponseEntity<Void> installed(@RequestBody LifecycleRequest lifecycleRequest) {
         final LifecycleDto lifecycleDto = lifecycleService.save(lifecycleRequest.toDto());
         if(lifecycleDto.getId() != null){   // todo: fix error handling
             return ResponseEntity.ok().build();

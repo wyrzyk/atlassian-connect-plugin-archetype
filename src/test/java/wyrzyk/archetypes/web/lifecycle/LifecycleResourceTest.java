@@ -96,15 +96,15 @@ public class LifecycleResourceTest {
                 .contains("new");
     }
 
-    private MockMvcResponse createInstalled(LifecycleInstallRequestMock request) {
+    private MockMvcResponse createInstalled(LifecycleRequestMock request) {
         return mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(request)
                 .when()
                 .post(LIFECYCLE_INSTALLED_PATH);
     }
 
-    private LifecycleInstallRequestMock.LifecycleInstallRequestMockBuilder prepareDefaultRequestBuilder() {
-        return LifecycleInstallRequestMock.builder()
+    private LifecycleRequestMock.LifecycleRequestMockBuilder prepareDefaultRequestBuilder() {
+        return LifecycleRequestMock.builder()
                 .key("installed-addon-key")
                 .clientKey("1")
                 .publicKey("MIGfZRWzwIDAQAB")

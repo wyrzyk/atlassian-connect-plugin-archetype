@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Value
 @Builder
-class LifecycleInstallRequestMock {
+class LifecycleRequestMock {
     String key;
     String clientKey;
     String publicKey;

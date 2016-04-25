@@ -4,7 +4,7 @@ package wyrzyk.archetypes.web.lifecycle;
 import lombok.Value;
 
 @Value
-class LifecycleInstallRequest {
+class LifecycleRequest {
     String key;
     String clientKey;
     String publicKey;
