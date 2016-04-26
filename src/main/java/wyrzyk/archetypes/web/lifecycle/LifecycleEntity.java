@@ -31,8 +31,10 @@ class LifecycleEntity {
     private String description;
     private String serviceEntitlementNumber;
     private String eventType;
+    boolean installed;
+    boolean enabled;
 
-    static LifecycleEntity fromDto(LifecycleDto lifecycleDto){
+    static LifecycleEntity fromDto(LifecycleDto lifecycleDto) {
         return LifecycleEntity.builder()
                 .id(lifecycleDto.getId())
                 .baseUrl(lifecycleDto.getBaseUrl())
@@ -46,6 +48,8 @@ class LifecycleEntity {
                 .serverVersion(lifecycleDto.getServerVersion())
                 .serviceEntitlementNumber(lifecycleDto.getServiceEntitlementNumber())
                 .sharedSecret(lifecycleDto.getSharedSecret())
+                .enabled(lifecycleDto.isEnabled())
+                .installed(lifecycleDto.isInstalled())
                 .build();
     }
 
@@ -63,6 +67,8 @@ class LifecycleEntity {
                 .serverVersion(this.getServerVersion())
                 .serviceEntitlementNumber(this.getServiceEntitlementNumber())
                 .sharedSecret(this.getSharedSecret())
+                .enabled(this.isEnabled())
+                .installed(this.isInstalled())
                 .build();
     }
 }

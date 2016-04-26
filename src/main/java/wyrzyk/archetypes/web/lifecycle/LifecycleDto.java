@@ -18,4 +18,6 @@ class LifecycleDto {
     String description;
     String serviceEntitlementNumber;
     String eventType;
+    boolean installed;
+    boolean enabled;
 }
