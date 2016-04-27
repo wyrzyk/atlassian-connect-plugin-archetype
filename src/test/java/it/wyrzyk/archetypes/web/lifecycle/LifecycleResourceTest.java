@@ -1,4 +1,4 @@
-package wyrzyk.archetypes.web.lifecycle;
+package it.wyrzyk.archetypes.web.lifecycle;
 
 import com.jayway.restassured.module.mockmvc.response.MockMvcResponse;
 import com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
@@ -15,6 +15,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import wyrzyk.archetypes.config.WebConfiguration;
+import wyrzyk.archetypes.web.lifecycle.LifecycleService;
 
 import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,8 +32,6 @@ public class LifecycleResourceTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
-    @Autowired
-    private LifecycleRepository lifecycleRepository;
     @Autowired
     private LifecycleService lifecycleService;
 
@@ -57,56 +56,56 @@ public class LifecycleResourceTest {
     @Transactional
     @Rollback(true)
     public void testIfInitializePayloadSaved() throws Exception {
-        assertThat(lifecycleRepository.count()).isZero();
+        assertThat(lifecycleService.countClients()).isZero();
         createInstalled(prepareDefaultRequestBuilder()
+                .clientKey("clientKey")
                 .build());
-        assertThat(lifecycleRepository.count())
+        assertThat(lifecycleService.countClients())
                 .isEqualTo(1);
-        assertThat(lifecycleRepository.findAll())
-                .extracting("clientKey", String.class)
-                .containsOnly("1");
+        assertThat(lifecycleService.findClient("clientKey")).isNotEmpty();
     }
 
     @Test
     @Transactional
     @Rollback(true)
     public void testTwoPayloadsSaved() throws Exception {
-        assertThat(lifecycleRepository.count()).isZero();
+        assertThat(lifecycleService.countClients()).isZero();
         createInstalled(prepareDefaultRequestBuilder()
+                .clientKey("1")
                 .build());
         createInstalled(prepareDefaultRequestBuilder()
                 .clientKey("2")
                 .build());
-        assertThat(lifecycleRepository.count())
+        assertThat(lifecycleService.countClients())
                 .isEqualTo(2);
-        assertThat(lifecycleRepository.findAll())
-                .extracting("clientKey", String.class)
-                .contains("1", "2");
+        assertThat(lifecycleService.findClient("1")).isNotEmpty();
+        assertThat(lifecycleService.findClient("2")).isNotEmpty();
     }
 
     @Test
     @Transactional
     @Rollback(true)
-    public void testIfPayloadIsUpdated() throws Exception {
-        assertThat(lifecycleRepository.count()).isZero();
+    public void testIfPayloadIsUpdated() throws Exception { //todo: determine if it's a bug or expected behaviour
+        assertThat(lifecycleService.countClients()).isZero();
         createInstalled(prepareDefaultRequestBuilder()
+                .clientKey("1")
                 .sharedSecret("old")
                 .build());
         createInstalled(prepareDefaultRequestBuilder()
                 .sharedSecret("new")
+                .clientKey("1")
                 .build());
-        assertThat(lifecycleRepository.count())
+        assertThat(lifecycleService.countClients())
                 .isEqualTo(1);
-        assertThat(lifecycleRepository.findAll())
-                .extracting("sharedSecret", String.class)
-                .contains("new");
+        assertThat(lifecycleService.findClient("1")).isNotEmpty();
+        assertThat(lifecycleService.findClient("1").get().getSharedSecret()).isEqualTo("new");
     }
 
     @Test
     @Transactional
     @Rollback(true)
     public void testWholeLifecycle() throws Exception {
-        assertThat(lifecycleRepository.count()).isZero();
+        assertThat(lifecycleService.countClients()).isZero();
         final String clientKey = "clientKey";
         final LifecycleRequestMock preparedRequest = prepareDefaultRequestBuilder()
                 .clientKey(clientKey)

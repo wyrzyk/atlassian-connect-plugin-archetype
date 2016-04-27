@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Value
 @Builder
-class LifecycleDto {
+public class LifecycleDto {
     Long id;
     String key;
     String clientKey;

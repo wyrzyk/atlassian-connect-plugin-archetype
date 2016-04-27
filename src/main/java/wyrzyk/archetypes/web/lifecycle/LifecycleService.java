@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 @Slf4j
@@ -28,12 +30,12 @@ public class LifecycleService {
     }
 
     @Transactional
-    boolean isEnabled(String clientKey) {
+    public boolean isEnabled(String clientKey) {
         return lifecycleRepository.isEnabled(clientKey);
     }
 
     @Transactional
-    boolean isInstalled(String clientKey) {
+    public boolean isInstalled(String clientKey) {
         return lifecycleRepository.isInstalled(clientKey);
     }
 
@@ -57,5 +59,14 @@ public class LifecycleService {
             log.warn("Faild to change enabled flag to {} for {}", enabled, clientKey);
         }
         return isUpdated;
+    }
+
+    public long countClients() {
+        return lifecycleRepository.count();
+    }
+
+    public Optional<LifecycleDto> findClient(String clientKey) {
+        final LifecycleEntity clientEntity = lifecycleRepository.findByClientKey(clientKey);
+        return Optional.ofNullable(clientEntity.toDto());
     }
 }

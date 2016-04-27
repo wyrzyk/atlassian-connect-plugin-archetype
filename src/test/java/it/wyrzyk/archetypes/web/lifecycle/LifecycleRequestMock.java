@@ -1,4 +1,4 @@
-package wyrzyk.archetypes.web.lifecycle;
+package it.wyrzyk.archetypes.web.lifecycle;
 
 import lombok.Builder;
 import lombok.Value;
