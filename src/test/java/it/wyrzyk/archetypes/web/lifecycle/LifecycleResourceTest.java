@@ -112,23 +112,26 @@ public class LifecycleResourceTest {
                 .build();
         createInstalled(preparedRequest);
         assertThat(lifecycleService.isInstalled(clientKey)).isTrue();
-
-        createLifecycleRequest(LIFECYCLE_ENABLED_PATH, preparedRequest);
-        assertThat(lifecycleService.isEnabled(clientKey)).isTrue();
-
-        createLifecycleRequest(LIFECYCLE_DISABLED_PATH, preparedRequest);
         assertThat(lifecycleService.isEnabled(clientKey)).isFalse();
 
-        createLifecycleRequest(LIFECYCLE_UNINSTALLED_PATH, preparedRequest);
+        createLifecycleRequest(LIFECYCLE_ENABLED_PATH, preparedRequest, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJxc2giOiJiNGYzMjJmNGRkMjQ2OTFiYmViNjZhZjkwZmNiZWE0MjAxMDkyMDA5YmM2MzA0MDc0YTg5NGRjMTQyOWFhOTA2IiwiaXNzIjoiamlyYTo1ZDQzMWQ5Yy0zZWU4LTQyNmEtYjM2NS1mNjc2ODljNTExYTMiLCJjb250ZXh0Ijp7fSwiZXhwIjoxNDYxNzc3MTMzLCJpYXQiOjE0NjE3NzY5NTN9.NTun8Cy_ipFu7BHzuvAVa4liuq4Xk4JwLw6z0kdGAJM");
+        assertThat(lifecycleService.isEnabled(clientKey)).isTrue();
+
+        createLifecycleRequest(LIFECYCLE_DISABLED_PATH, preparedRequest, "");
+        assertThat(lifecycleService.isEnabled(clientKey)).isFalse();
+
+        createLifecycleRequest(LIFECYCLE_UNINSTALLED_PATH, preparedRequest, "");
         assertThat(lifecycleService.isInstalled(clientKey)).isFalse();
     }
 
     private MockMvcResponse createInstalled(LifecycleRequestMock request) {
-        return createLifecycleRequest(LIFECYCLE_INSTALLED_PATH, request);
+        return createLifecycleRequest(LIFECYCLE_INSTALLED_PATH, request, "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInFzaCI6ImEzYzgyZDc2MTY2YWQ2ODM3YmE3NzYzNmFlNDZmZTkyNTQxYmVlNTg1YTNjNzAyNzhjNjgyYWM2MjQxZWNmYTIiLCJpc3MiOiJqaXJhOjVkNDMxZDljLTNlZTgtNDI2YS1iMzY1LWY2NzY4OWM1MTFhMyIsImNvbnRleHQiOnsidXNlciI6eyJ1c2VyS2V5IjoiYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwiZGlzcGxheU5hbWUiOiJhZG1pbiJ9fSwiZXhwIjoxNDYxNzc3MTMyLCJpYXQiOjE0NjE3NzY5NTJ9.-aY71bfoQKokY3Ha_DB2Uq56-tAfxCLDZf-r856XcB8");
     }
 
-    private MockMvcResponse createLifecycleRequest(String resourcePath, LifecycleRequestMock request) {
+    private MockMvcResponse createLifecycleRequest(String resourcePath, LifecycleRequestMock request, String jwtPayload) {
         return mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
+                .param("user_key", "admin")
+                .header("Authorization", "JWT" + jwtPayload)
                 .body(request)
                 .when()
                 .post(resourcePath);
@@ -137,15 +140,15 @@ public class LifecycleResourceTest {
 
     private LifecycleRequestMock.LifecycleRequestMockBuilder prepareDefaultRequestBuilder() {
         return LifecycleRequestMock.builder()
-                .key("installed-addon-key")
-                .clientKey("1")
-                .publicKey("MIGfZRWzwIDAQAB")
-                .sharedSecret("a-secret-key-not-to-be-lost")
-                .serverVersion("server-version")
-                .pluginsVersion("version-of-connect")
-                .baseUrl("http://example.atlassian.net")
+                .key("wyrzyk.archetypes.atlassian-connect-plugin")
+                .clientKey("jira:5d431d9c-3ee8-426a-b365-f67689c511a3")
+                .publicKey("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCesbDSDJn70fRG/wH4KyWjIWWxIjqvIbLiZcgv0OdTwlGRCa/5+CIBmjpj4WELCNVp0/1vHXX3RdeQe6HZ/0kmP3ptViqcyj9YdvC+WBwpYx5Z6Nula5asdwc3jG3tD9spAmv0EfoXrSbQrn2a145cJvgo5VrE3Z4j5UWD4sqQXwIDAQAB")
+                .sharedSecret("28b8a704-879a-45fe-94ad-09fb3760a5e5")
+                .serverVersion("72002")
+                .pluginsVersion("1.1.84")
+                .baseUrl("http://localhost:2990/jira")
                 .productType("jira")
-                .description("Atlassian JIRA at https://example.atlassian.net")
+                .description("Atlassian JIRA at http://localhost:2990/jira")
                 .serviceEntitlementNumber("SEN-number")
                 .eventType("installed");
     }
