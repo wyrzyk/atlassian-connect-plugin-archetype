@@ -5,13 +5,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.time.ZonedDateTime;
 
 @Entity
 @AllArgsConstructor
@@ -33,7 +30,6 @@ class LifecycleEntity {
     private String productType;
     private String description;
     private String serviceEntitlementNumber;
-    private String eventType;
     boolean installed;
     boolean enabled;
 
@@ -43,7 +39,6 @@ class LifecycleEntity {
                 .baseUrl(lifecycleDto.getBaseUrl())
                 .clientKey(lifecycleDto.getClientKey())
                 .description(lifecycleDto.getDescription())
-                .eventType(lifecycleDto.getEventType())
                 .key(lifecycleDto.getKey())
                 .pluginsVersion(lifecycleDto.getPluginsVersion())
                 .productType(lifecycleDto.getProductType())
@@ -62,7 +57,6 @@ class LifecycleEntity {
                 .baseUrl(this.getBaseUrl())
                 .clientKey(this.getClientKey())
                 .description(this.getDescription())
-                .eventType(this.getEventType())
                 .key(this.getKey())
                 .pluginsVersion(this.getPluginsVersion())
                 .productType(this.getProductType())

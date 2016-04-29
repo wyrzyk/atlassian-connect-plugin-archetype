@@ -22,7 +22,6 @@ class LifecycleRequest {
                 .baseUrl(this.getBaseUrl())
                 .clientKey(this.getClientKey())
                 .description(this.getDescription())
-                .eventType(this.getEventType())
                 .key(this.getKey())
                 .pluginsVersion(this.getPluginsVersion())
                 .productType(this.getProductType())
