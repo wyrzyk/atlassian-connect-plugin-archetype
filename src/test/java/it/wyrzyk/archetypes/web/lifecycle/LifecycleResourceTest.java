@@ -17,7 +17,12 @@ import org.springframework.web.context.WebApplicationContext;
 import wyrzyk.archetypes.config.WebConfiguration;
 import wyrzyk.archetypes.web.lifecycle.LifecycleService;
 
+import java.util.Optional;
+
 import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
+import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @WebAppConfiguration
@@ -49,7 +54,17 @@ public class LifecycleResourceTest {
     public void testIfInstalledMethodReturns200or204() throws Exception {
         createInstalled(prepareDefaultRequestBuilder().build())
                 .then()
-                .statusCode(Matchers.isOneOf(200, 204));
+                .statusCode(Matchers.isOneOf(SC_OK, SC_NO_CONTENT));
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void instalationShouldFailWithoutAuthenticationHeader() throws Exception {
+        createLifecycleRequest(LIFECYCLE_INSTALLED_PATH, prepareDefaultRequestBuilder().build(),
+                Optional.empty())
+                .then()
+                .statusCode(SC_UNAUTHORIZED);
     }
 
     @Test
@@ -114,24 +129,26 @@ public class LifecycleResourceTest {
         assertThat(lifecycleService.isInstalled(clientKey)).isTrue();
         assertThat(lifecycleService.isEnabled(clientKey)).isFalse();
 
-        createLifecycleRequest(LIFECYCLE_ENABLED_PATH, preparedRequest, "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJxc2giOiJiNGYzMjJmNGRkMjQ2OTFiYmViNjZhZjkwZmNiZWE0MjAxMDkyMDA5YmM2MzA0MDc0YTg5NGRjMTQyOWFhOTA2IiwiaXNzIjoiamlyYTo1ZDQzMWQ5Yy0zZWU4LTQyNmEtYjM2NS1mNjc2ODljNTExYTMiLCJjb250ZXh0Ijp7fSwiZXhwIjoxNDYxNzc3MTMzLCJpYXQiOjE0NjE3NzY5NTN9.NTun8Cy_ipFu7BHzuvAVa4liuq4Xk4JwLw6z0kdGAJM");
+        createLifecycleRequest(LIFECYCLE_ENABLED_PATH, preparedRequest, Optional.of("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJxc2giOiJiNGYzMjJmNGRkMjQ2OTFiYmViNjZhZjkwZmNiZWE0MjAxMDkyMDA5YmM2MzA0MDc0YTg5NGRjMTQyOWFhOTA2IiwiaXNzIjoiamlyYTo1ZDQzMWQ5Yy0zZWU4LTQyNmEtYjM2NS1mNjc2ODljNTExYTMiLCJjb250ZXh0Ijp7fSwiZXhwIjoxNDYxNzc3MTMzLCJpYXQiOjE0NjE3NzY5NTN9.NTun8Cy_ipFu7BHzuvAVa4liuq4Xk4JwLw6z0kdGAJM"));
         assertThat(lifecycleService.isEnabled(clientKey)).isTrue();
 
-        createLifecycleRequest(LIFECYCLE_DISABLED_PATH, preparedRequest, "");
+        createLifecycleRequest(LIFECYCLE_DISABLED_PATH, preparedRequest, Optional.empty());
         assertThat(lifecycleService.isEnabled(clientKey)).isFalse();
 
-        createLifecycleRequest(LIFECYCLE_UNINSTALLED_PATH, preparedRequest, "");
+        createLifecycleRequest(LIFECYCLE_UNINSTALLED_PATH, preparedRequest, Optional.empty());
         assertThat(lifecycleService.isInstalled(clientKey)).isFalse();
     }
 
     private MockMvcResponse createInstalled(LifecycleRequestMock request) {
-        return createLifecycleRequest(LIFECYCLE_INSTALLED_PATH, request, "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInFzaCI6ImEzYzgyZDc2MTY2YWQ2ODM3YmE3NzYzNmFlNDZmZTkyNTQxYmVlNTg1YTNjNzAyNzhjNjgyYWM2MjQxZWNmYTIiLCJpc3MiOiJqaXJhOjVkNDMxZDljLTNlZTgtNDI2YS1iMzY1LWY2NzY4OWM1MTFhMyIsImNvbnRleHQiOnsidXNlciI6eyJ1c2VyS2V5IjoiYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwiZGlzcGxheU5hbWUiOiJhZG1pbiJ9fSwiZXhwIjoxNDYxNzc3MTMyLCJpYXQiOjE0NjE3NzY5NTJ9.-aY71bfoQKokY3Ha_DB2Uq56-tAfxCLDZf-r856XcB8");
+        return createLifecycleRequest(LIFECYCLE_INSTALLED_PATH, request, Optional.of("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInFzaCI6ImEzYzgyZDc2MTY2YWQ2ODM3YmE3NzYzNmFlNDZmZTkyNTQxYmVlNTg1YTNjNzAyNzhjNjgyYWM2MjQxZWNmYTIiLCJpc3MiOiJqaXJhOjVkNDMxZDljLTNlZTgtNDI2YS1iMzY1LWY2NzY4OWM1MTFhMyIsImNvbnRleHQiOnsidXNlciI6eyJ1c2VyS2V5IjoiYWRtaW4iLCJ1c2VybmFtZSI6ImFkbWluIiwiZGlzcGxheU5hbWUiOiJhZG1pbiJ9fSwiZXhwIjoxNDYxNzc3MTMyLCJpYXQiOjE0NjE3NzY5NTJ9.-aY71bfoQKokY3Ha_DB2Uq56-tAfxCLDZf-r856XcB8"));
     }
 
-    private MockMvcResponse createLifecycleRequest(String resourcePath, LifecycleRequestMock request, String jwtPayload) {
-        return mockMvc.contentType(MediaType.APPLICATION_JSON_VALUE)
+    private MockMvcResponse createLifecycleRequest(String resourcePath, LifecycleRequestMock request,
+                                                   Optional<String> jwtPayloadOptional) {
+        return jwtPayloadOptional.map(jwt -> mockMvc.header("Authorization", "JWT " + jwt))
+                .orElse(mockMvc)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .param("user_key", "admin")
-                .header("Authorization", "JWT" + jwtPayload)
                 .body(request)
                 .when()
                 .post(resourcePath);
