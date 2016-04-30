@@ -16,8 +16,8 @@ interface LifecycleRepository extends CrudRepository<LifecycleEntity, Long> {
     int setEnabled(String clientKey, boolean enabled);
 
     @Query("SELECT l.enabled FROM  LifecycleEntity l WHERE l.clientKey = ?1")
-    boolean isEnabled(String clientKey);
+    Boolean isEnabled(String clientKey);
 
     @Query("SELECT l.installed FROM  LifecycleEntity l WHERE l.clientKey = ?1")
-    boolean isInstalled(String clientKey);
+    Boolean isInstalled(String clientKey);
 }

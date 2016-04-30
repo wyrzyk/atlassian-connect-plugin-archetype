@@ -31,12 +31,14 @@ public class LifecycleService {
 
     @Transactional
     public boolean isEnabled(String clientKey) {
-        return lifecycleRepository.isEnabled(clientKey);
+        final Boolean enabled = lifecycleRepository.isEnabled(clientKey);
+        return enabled != null && enabled;
     }
 
     @Transactional
     public boolean isInstalled(String clientKey) {
-        return lifecycleRepository.isInstalled(clientKey);
+        final Boolean installed = lifecycleRepository.isInstalled(clientKey);
+        return installed != null && installed;
     }
 
     @Transactional
