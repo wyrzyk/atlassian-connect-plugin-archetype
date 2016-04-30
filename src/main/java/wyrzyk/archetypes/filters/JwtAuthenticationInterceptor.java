@@ -7,8 +7,14 @@ import wyrzyk.archetypes.auth.JwtService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
+import static java.util.Collections.list;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.apache.commons.lang3.StringUtils.removeStart;
+import static org.apache.commons.lang3.StringUtils.startsWith;
 
 public class JwtAuthenticationInterceptor implements HandlerInterceptor {
     @Autowired
@@ -16,8 +22,8 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
-        final String authentication = request.getHeader("Authorization");
-        if (authentication == null) {
+        final Optional<String> jwtTokenOptional = extractJwtToken(request);
+        if (!jwtTokenOptional.isPresent()) {
             response.setStatus(SC_UNAUTHORIZED);
             return false;
         }
@@ -32,5 +38,18 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
 
+    }
+
+    private Optional<String> extractJwtToken(HttpServletRequest request) {
+        final String jwtHeaderPrefix = "JWT ";
+        return ofNullable(
+                of(request)
+                        .map(req -> req.getParameter("jwt"))
+                        .orElseGet(() -> list(request.getHeaders("Authorization"))
+                                .stream()
+                                .filter(header -> startsWith(header, jwtHeaderPrefix))
+                                .map(header -> removeStart(header, jwtHeaderPrefix))
+                                .findFirst()
+                                .orElse(null)));
     }
 }
