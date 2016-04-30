@@ -137,7 +137,7 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <version>1.7.21</version>
         </dependency>
-        
+
         <!-- Test dependencies-->
         <dependency>
             <groupId>junit</groupId>
@@ -177,9 +177,14 @@
         </dependency>
         <!-- Util dependencies-->
         <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>0.6.0</version>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-core</artifactId>
+            <version>${jwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.atlassian.jwt</groupId>
+            <artifactId>jwt-api</artifactId>
+            <version>${jwt.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -193,12 +198,30 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>atlassian-public</id>
+            <url>https://maven.atlassian.com/repository/public</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <checksumPolicy>warn</checksumPolicy>
+            </releases>
+        </repository>
+    </repositories>
+
     <properties>
         <jersey.version>2.22.2</jersey.version>
         <spring.version>4.2.5.RELEASE</spring.version>
         <entitymanager.version>5.1.0.Final</entitymanager.version>
         <spring-data.version>1.10.1.RELEASE</spring-data.version>
         <rest-assured.version>2.9.0</rest-assured.version>
+        <jwt.version>1.6.0-0005</jwt.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 </project>
