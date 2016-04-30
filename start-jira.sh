@@ -1,2 +1,0 @@
-#!/usr/bin/env bash
-atlas-run-standalone --container tomcat7x --product jira --version 7.2.0-OD-05-023 --data-version 7.2.0-OD-05-023 --bundled-plugins com.atlassian.bundles:json-schema-validator-atlassian-bundle:1.0.4,com.atlassian.upm:atlassian-universal-plugin-manager-plugin:2.21-D20160128T024330,com.atlassian.jwt:jwt-plugin:1.5.9-0019,com.atlassian.plugins:atlassian-connect-plugin:1.1.84 --jvmargs -Datlassian.upm.on.demand=true
