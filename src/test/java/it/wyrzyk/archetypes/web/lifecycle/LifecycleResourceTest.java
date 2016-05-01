@@ -34,6 +34,7 @@ public class LifecycleResourceTest {
     private static final String LIFECYCLE_ENABLED_PATH = LIFECYCLE_PATH + "/enabled";
     private static final String LIFECYCLE_DISABLED_PATH = LIFECYCLE_PATH + "/disabled";
     private static final String LIFECYCLE_UNINSTALLED_PATH = LIFECYCLE_PATH + "/uninstalled";
+    public static final String CLIENT_KEY = "jira:5d431d9c-3ee8-426a-b365-f67689c511a3";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -121,22 +122,20 @@ public class LifecycleResourceTest {
     @Rollback(true)
     public void testWholeLifecycle() throws Exception {
         assertThat(lifecycleService.countClients()).isZero();
-        final String clientKey = "clientKey";
         final LifecycleRequestMock preparedRequest = prepareDefaultRequestBuilder()
-                .clientKey(clientKey)
                 .build();
         createInstalled(preparedRequest);
-        assertThat(lifecycleService.isInstalled(clientKey)).isTrue();
-        assertThat(lifecycleService.isEnabled(clientKey)).isFalse();
+        assertThat(lifecycleService.isInstalled(CLIENT_KEY)).isTrue();
+        assertThat(lifecycleService.isEnabled(CLIENT_KEY)).isFalse();
 
         createLifecycleRequest(LIFECYCLE_ENABLED_PATH, preparedRequest, Optional.of("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJxc2giOiJiNGYzMjJmNGRkMjQ2OTFiYmViNjZhZjkwZmNiZWE0MjAxMDkyMDA5YmM2MzA0MDc0YTg5NGRjMTQyOWFhOTA2IiwiaXNzIjoiamlyYTo1ZDQzMWQ5Yy0zZWU4LTQyNmEtYjM2NS1mNjc2ODljNTExYTMiLCJjb250ZXh0Ijp7fSwiZXhwIjoxNDYxNzc3MTMzLCJpYXQiOjE0NjE3NzY5NTN9.NTun8Cy_ipFu7BHzuvAVa4liuq4Xk4JwLw6z0kdGAJM"));
-        assertThat(lifecycleService.isEnabled(clientKey)).isTrue();
+        assertThat(lifecycleService.isEnabled(CLIENT_KEY)).isTrue();
 
         createLifecycleRequest(LIFECYCLE_DISABLED_PATH, preparedRequest, Optional.empty());
-        assertThat(lifecycleService.isEnabled(clientKey)).isFalse();
+        assertThat(lifecycleService.isEnabled(CLIENT_KEY)).isFalse();
 
         createLifecycleRequest(LIFECYCLE_UNINSTALLED_PATH, preparedRequest, Optional.empty());
-        assertThat(lifecycleService.isInstalled(clientKey)).isFalse();
+        assertThat(lifecycleService.isInstalled(CLIENT_KEY)).isFalse();
     }
 
     private MockMvcResponse createInstalled(LifecycleRequestMock request) {
@@ -158,7 +157,7 @@ public class LifecycleResourceTest {
     private LifecycleRequestMock.LifecycleRequestMockBuilder prepareDefaultRequestBuilder() {
         return LifecycleRequestMock.builder()
                 .key("wyrzyk.archetypes.atlassian-connect-plugin")
-                .clientKey("jira:5d431d9c-3ee8-426a-b365-f67689c511a3")
+                .clientKey(CLIENT_KEY)
                 .publicKey("MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCesbDSDJn70fRG/wH4KyWjIWWxIjqvIbLiZcgv0OdTwlGRCa/5+CIBmjpj4WELCNVp0/1vHXX3RdeQe6HZ/0kmP3ptViqcyj9YdvC+WBwpYx5Z6Nula5asdwc3jG3tD9spAmv0EfoXrSbQrn2a145cJvgo5VrE3Z4j5UWD4sqQXwIDAQAB")
                 .sharedSecret("28b8a704-879a-45fe-94ad-09fb3760a5e5")
                 .serverVersion("72002")

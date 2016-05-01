@@ -69,6 +69,6 @@ public class LifecycleService {
 
     public Optional<LifecycleDto> findClient(String clientKey) {
         final LifecycleEntity clientEntity = lifecycleRepository.findByClientKey(clientKey);
-        return Optional.ofNullable(clientEntity.toDto());
+        return Optional.ofNullable(clientEntity).map(LifecycleEntity::toDto);
     }
 }

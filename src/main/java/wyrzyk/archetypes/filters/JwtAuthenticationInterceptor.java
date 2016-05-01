@@ -1,24 +1,23 @@
 package wyrzyk.archetypes.filters;
 
+import com.atlassian.jwt.core.http.JavaxJwtRequestExtractor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-import wyrzyk.archetypes.auth.JwtService;
+import wyrzyk.archetypes.auth.JwtAuthenticatorService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
-import static java.util.Collections.list;
-import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
-import static org.apache.commons.lang3.StringUtils.removeStart;
-import static org.apache.commons.lang3.StringUtils.startsWith;
 
 public class JwtAuthenticationInterceptor implements HandlerInterceptor {
     @Autowired
-    private JwtService jwtService;
+    private JwtAuthenticatorService jwtAuthenticator;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
@@ -27,7 +26,14 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
             response.setStatus(SC_UNAUTHORIZED);
             return false;
         }
-        return true;
+        if (isFirstInstalledRequest((HandlerMethod) o)) {
+            return true;
+        }
+        return jwtAuthenticator.authenticate(request, response);
+    }
+
+    private boolean isFirstInstalledRequest(HandlerMethod o) {
+        return StringUtils.equals(o.getMethod().getName(), "installed");
     }
 
     @Override
@@ -41,15 +47,7 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
     }
 
     private Optional<String> extractJwtToken(HttpServletRequest request) {
-        final String jwtHeaderPrefix = "JWT ";
-        return ofNullable(
-                of(request)
-                        .map(req -> req.getParameter("jwt"))
-                        .orElseGet(() -> list(request.getHeaders("Authorization"))
-                                .stream()
-                                .filter(header -> startsWith(header, jwtHeaderPrefix))
-                                .map(header -> removeStart(header, jwtHeaderPrefix))
-                                .findFirst()
-                                .orElse(null)));
+        final JavaxJwtRequestExtractor javaxJwtRequestExtractor = new JavaxJwtRequestExtractor();
+        return ofNullable(javaxJwtRequestExtractor.extractJwt(request));
     }
 }
