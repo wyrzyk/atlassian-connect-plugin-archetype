@@ -175,7 +175,7 @@
             <version>3.4.1</version>
             <scope>test</scope>
         </dependency>
-        <!-- Util dependencies-->
+        <!-- Jwt and dependencies -->
         <dependency>
             <groupId>com.atlassian.jwt</groupId>
             <artifactId>jwt-core</artifactId>
@@ -186,6 +186,22 @@
             <artifactId>jwt-api</artifactId>
             <version>${jwt.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.10</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
+        </dependency>
+        <!-- Util dependencies-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
