@@ -42,7 +42,7 @@ public class LifecycleService {
     }
 
     @Transactional
-    boolean setInstalled(String clientKey, boolean installed) {
+    public boolean setInstalled(String clientKey, boolean installed) {
         final boolean isUpdated = lifecycleRepository.setInstalled(clientKey, installed) > 0;
         if (isUpdated) {
             log.debug("Installed flag has been changed to {} for {}", installed, clientKey);
@@ -53,7 +53,7 @@ public class LifecycleService {
     }
 
     @Transactional
-    boolean setEnabled(String clientKey, boolean enabled) {
+    public boolean setEnabled(String clientKey, boolean enabled) {
         final boolean isUpdated = lifecycleRepository.setEnabled(clientKey, enabled) > 0;
         if (isUpdated) {
             log.debug("Enabled flag has been changed to {} for {}", enabled, clientKey);
