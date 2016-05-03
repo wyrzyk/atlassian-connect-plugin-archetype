@@ -18,8 +18,8 @@ class LifecycleResource {
     private final LifecycleService lifecycleService;
 
     @RequestMapping(value = "installed")
-    public ResponseEntity<Void> installed(@RequestBody LifecycleRequest lifecycleRequest) {
-        final LifecycleDto lifecycleDto = lifecycleService.save(lifecycleRequest.toDto());
+    public ResponseEntity<Void> installed(@RequestBody ClientInfoRequest clientInfoRequest) {
+        final ClientInfoDto lifecycleDto = lifecycleService.save(clientInfoRequest.toDto());
         if (lifecycleDto.getId() != null) {   // todo: fix error handling
             return ResponseEntity.ok().build();
         } else {
@@ -28,20 +28,20 @@ class LifecycleResource {
     }
 
     @RequestMapping(value = "enabled")
-    public ResponseEntity<Void> enabled(@RequestBody LifecycleRequest lifecycleRequest) {
-        return lifecycleService.setEnabled(lifecycleRequest.getClientKey(), true) ?
+    public ResponseEntity<Void> enabled(@RequestBody ClientInfoRequest clientInfoRequest) {
+        return lifecycleService.setEnabled(clientInfoRequest.getClientKey(), true) ?
                 ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
     @RequestMapping(value = "disabled")
-    public ResponseEntity<Void> disabled(@RequestBody LifecycleRequest lifecycleRequest) {
-        return lifecycleService.setEnabled(lifecycleRequest.getClientKey(), false) ?
+    public ResponseEntity<Void> disabled(@RequestBody ClientInfoRequest clientInfoRequest) {
+        return lifecycleService.setEnabled(clientInfoRequest.getClientKey(), false) ?
                 ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
     @RequestMapping(value = "uninstalled")
-    public ResponseEntity<Void> uninstalled(@RequestBody LifecycleRequest lifecycleRequest) {
-        return lifecycleService.setInstalled(lifecycleRequest.getClientKey(), false) ?
+    public ResponseEntity<Void> uninstalled(@RequestBody ClientInfoRequest clientInfoRequest) {
+        return lifecycleService.setInstalled(clientInfoRequest.getClientKey(), false) ?
                 ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 }

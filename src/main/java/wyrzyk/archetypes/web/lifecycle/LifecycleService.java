@@ -12,38 +12,38 @@ import java.util.Optional;
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
 @Slf4j
 public class LifecycleService {
-    private final LifecycleRepository lifecycleRepository;
+    private final ClientInfoRepository clientInfoRepository;
 
     @Transactional
-    LifecycleDto save(LifecycleDto lifecycleDto) {
-        final LifecycleEntity lifecycleEntity = lifecycleRepository.findByClientKey(lifecycleDto.getClientKey());
-        final LifecycleEntity newLifecycleEntity = LifecycleEntity.fromDto(lifecycleDto);
+    ClientInfoDto save(ClientInfoDto clientInfoDto) {
+        final ClientInfoEntity lifecycleEntity = clientInfoRepository.findByClientKey(clientInfoDto.getClientKey());
+        final ClientInfoEntity newClientInfoEntity = ClientInfoEntity.fromDto(clientInfoDto);
         if (lifecycleEntity != null) {
-            log.debug("Plugin has been installed again for user {}", lifecycleDto.getClientKey());
-            newLifecycleEntity.setId(lifecycleEntity.getId());
+            log.debug("Plugin has been installed again for user {}", clientInfoDto.getClientKey());
+            newClientInfoEntity.setId(lifecycleEntity.getId());
         } else {
-            log.debug("Plugin has been installed for user {}", lifecycleDto.getClientKey());
+            log.debug("Plugin has been installed for user {}", clientInfoDto.getClientKey());
         }
-        newLifecycleEntity.setInstalled(true);
-        final LifecycleEntity entity = lifecycleRepository.save(newLifecycleEntity);
+        newClientInfoEntity.setInstalled(true);
+        final ClientInfoEntity entity = clientInfoRepository.save(newClientInfoEntity);
         return entity.toDto();
     }
 
     @Transactional
     public boolean isEnabled(String clientKey) {
-        final Boolean enabled = lifecycleRepository.isEnabled(clientKey);
+        final Boolean enabled = clientInfoRepository.isEnabled(clientKey);
         return enabled != null && enabled;
     }
 
     @Transactional
     public boolean isInstalled(String clientKey) {
-        final Boolean installed = lifecycleRepository.isInstalled(clientKey);
+        final Boolean installed = clientInfoRepository.isInstalled(clientKey);
         return installed != null && installed;
     }
 
     @Transactional
     public boolean setInstalled(String clientKey, boolean installed) {
-        final boolean isUpdated = lifecycleRepository.setInstalled(clientKey, installed) > 0;
+        final boolean isUpdated = clientInfoRepository.setInstalled(clientKey, installed) > 0;
         if (isUpdated) {
             log.debug("Installed flag has been changed to {} for {}", installed, clientKey);
         } else {
@@ -54,7 +54,7 @@ public class LifecycleService {
 
     @Transactional
     public boolean setEnabled(String clientKey, boolean enabled) {
-        final boolean isUpdated = lifecycleRepository.setEnabled(clientKey, enabled) > 0;
+        final boolean isUpdated = clientInfoRepository.setEnabled(clientKey, enabled) > 0;
         if (isUpdated) {
             log.debug("Enabled flag has been changed to {} for {}", enabled, clientKey);
         } else {
@@ -64,11 +64,11 @@ public class LifecycleService {
     }
 
     public long countClients() {
-        return lifecycleRepository.count();
+        return clientInfoRepository.count();
     }
 
-    public Optional<LifecycleDto> findClient(String clientKey) {
-        final LifecycleEntity clientEntity = lifecycleRepository.findByClientKey(clientKey);
-        return Optional.ofNullable(clientEntity).map(LifecycleEntity::toDto);
+    public Optional<ClientInfoDto> findClient(String clientKey) {
+        final ClientInfoEntity clientEntity = clientInfoRepository.findByClientKey(clientKey);
+        return Optional.ofNullable(clientEntity).map(ClientInfoEntity::toDto);
     }
 }

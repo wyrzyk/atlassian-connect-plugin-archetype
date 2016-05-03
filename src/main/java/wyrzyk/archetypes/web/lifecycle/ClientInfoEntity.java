@@ -16,7 +16,7 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @Builder
-class LifecycleEntity {
+class ClientInfoEntity {
     @Id
     @GeneratedValue
     private Long id;
@@ -33,8 +33,8 @@ class LifecycleEntity {
     boolean installed;
     boolean enabled;
 
-    static LifecycleEntity fromDto(LifecycleDto lifecycleDto) {
-        return LifecycleEntity.builder()
+    static ClientInfoEntity fromDto(ClientInfoDto lifecycleDto) {
+        return ClientInfoEntity.builder()
                 .id(lifecycleDto.getId())
                 .baseUrl(lifecycleDto.getBaseUrl())
                 .clientKey(lifecycleDto.getClientKey())
@@ -51,8 +51,8 @@ class LifecycleEntity {
                 .build();
     }
 
-    LifecycleDto toDto() {
-        return LifecycleDto.builder()
+    ClientInfoDto toDto() {
+        return ClientInfoDto.builder()
                 .id(this.getId())
                 .baseUrl(this.getBaseUrl())
                 .clientKey(this.getClientKey())

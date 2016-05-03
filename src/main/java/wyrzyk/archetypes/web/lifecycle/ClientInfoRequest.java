@@ -4,7 +4,7 @@ package wyrzyk.archetypes.web.lifecycle;
 import lombok.Value;
 
 @Value
-class LifecycleRequest {
+class ClientInfoRequest {
     String key;
     String clientKey;
     String publicKey;
@@ -17,8 +17,8 @@ class LifecycleRequest {
     String serviceEntitlementNumber;
     String eventType;
 
-    LifecycleDto toDto() {
-        return LifecycleDto.builder()
+    ClientInfoDto toDto() {
+        return ClientInfoDto.builder()
                 .baseUrl(this.getBaseUrl())
                 .clientKey(this.getClientKey())
                 .description(this.getDescription())

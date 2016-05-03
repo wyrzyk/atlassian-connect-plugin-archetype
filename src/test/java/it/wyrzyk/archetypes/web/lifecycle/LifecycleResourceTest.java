@@ -4,6 +4,7 @@ import com.jayway.restassured.module.mockmvc.response.MockMvcResponse;
 import com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class LifecycleResourceTest {
     private static final String LIFECYCLE_ENABLED_PATH = LIFECYCLE_PATH + "/enabled";
     private static final String LIFECYCLE_DISABLED_PATH = LIFECYCLE_PATH + "/disabled";
     private static final String LIFECYCLE_UNINSTALLED_PATH = LIFECYCLE_PATH + "/uninstalled";
-    public static final String CLIENT_KEY = "jira:5d431d9c-3ee8-426a-b365-f67689c511a3";
+    private static final String CLIENT_KEY = "jira:5d431d9c-3ee8-426a-b365-f67689c511a3";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -120,6 +121,7 @@ public class LifecycleResourceTest {
     @Test
     @Transactional
     @Rollback(true)
+    @Ignore
     public void testWholeLifecycle() throws Exception {
         assertThat(lifecycleService.countClients()).isZero();
         final LifecycleRequestMock preparedRequest = prepareDefaultRequestBuilder()
