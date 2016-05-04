@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import wyrzyk.archetypes.web.lifecycle.LifecycleService;
 
 import javax.annotation.Nonnull;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
@@ -17,12 +18,8 @@ public class JwtIssuerSharedSecretServiceImpl implements JwtIssuerSharedSecretSe
 
     @Override
     public String getSharedSecret(@Nonnull String issuer) throws JwtIssuerLacksSharedSecretException, JwtUnknownIssuerException {
-        final String sharedSecret = lifecycleService.findClient(issuer)
+        return Optional.ofNullable(lifecycleService.findClient(issuer)
                 .orElseThrow(() -> new JwtUnknownIssuerException(issuer))
-                .getSharedSecret();
-        if (sharedSecret == null) {
-            throw new JwtIssuerLacksSharedSecretException(issuer);
-        }
-        return sharedSecret;
+                .getSharedSecret()).orElseThrow(() -> new JwtIssuerLacksSharedSecretException(issuer));
     }
 }
