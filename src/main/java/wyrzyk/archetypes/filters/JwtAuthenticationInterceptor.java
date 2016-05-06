@@ -7,6 +7,8 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import wyrzyk.archetypes.auth.JwtAuthenticatorService;
+import wyrzyk.archetypes.auth.JwtService;
+import wyrzyk.archetypes.web.lifecycle.LifecycleService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +20,10 @@ import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 public class JwtAuthenticationInterceptor implements HandlerInterceptor {
     @Autowired
     private JwtAuthenticatorService jwtAuthenticator;
+    @Autowired
+    private JwtService jwtService;
+    @Autowired
+    private LifecycleService lifecycleService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
@@ -26,14 +32,19 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
             response.setStatus(SC_UNAUTHORIZED);
             return false;
         }
-        if (isFirstInstalledRequest((HandlerMethod) o)) {
+        if (isFirstInstalledRequest((HandlerMethod) o, jwtTokenOptional)) {
             return true;
         }
         return jwtAuthenticator.authenticate(request, response);
     }
 
-    private boolean isFirstInstalledRequest(HandlerMethod o) {
-        return StringUtils.equals(o.getMethod().getName(), "installed");
+    private boolean isFirstInstalledRequest(HandlerMethod o, Optional<String> jwtTokenOptional) {
+        final boolean isInstalledRequest = StringUtils.equals(o.getMethod().getName(), "installed");
+        final boolean isClientAlreadyInstalled = !jwtTokenOptional
+                .flatMap(jwtService::extractIssuerUnverified)
+                .flatMap(lifecycleService::findClient)
+                .isPresent();
+        return isInstalledRequest && isClientAlreadyInstalled;
     }
 
     @Override

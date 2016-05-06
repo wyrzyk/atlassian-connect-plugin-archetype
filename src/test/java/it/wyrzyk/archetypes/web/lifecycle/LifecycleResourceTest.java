@@ -19,7 +19,10 @@ import wyrzyk.archetypes.auth.JwtService;
 import wyrzyk.archetypes.config.WebConfiguration;
 import wyrzyk.archetypes.web.lifecycle.LifecycleService;
 
+import java.util.Optional;
+
 import static com.jayway.restassured.module.mockmvc.RestAssuredMockMvc.given;
+import static java.util.Optional.empty;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
@@ -63,7 +66,7 @@ public class LifecycleResourceTest {
     @Rollback(true)
     public void instalationShouldFailWithoutAuthenticationHeader() throws Exception {
         createLifecycleRequest(LIFECYCLE_INSTALLED_PATH, prepareDefaultRequestBuilder().build(),
-                false)
+                empty())
                 .then()
                 .statusCode(SC_UNAUTHORIZED);
     }
@@ -101,20 +104,37 @@ public class LifecycleResourceTest {
     @Test
     @Transactional
     @Rollback(true)
-    public void testIfPayloadIsUpdated() throws Exception { //todo: determine if it's a bug or expected behaviour
+    public void testIfPluginIsReinstalledAndSecondRequestHasProperJwtToken() throws Exception {
         assertThat(lifecycleService.countClients()).isZero();
         createInstalled(prepareDefaultRequestBuilder()
-                .clientKey("1")
-                .sharedSecret("old")
+                .sharedSecret(SHARED_SECRET)
                 .build());
         createInstalled(prepareDefaultRequestBuilder()
                 .sharedSecret("new")
-                .clientKey("1")
                 .build());
         assertThat(lifecycleService.countClients())
                 .isEqualTo(1);
-        assertThat(lifecycleService.findClient("1")).isNotEmpty();
-        assertThat(lifecycleService.findClient("1").get().getSharedSecret()).isEqualTo("new");
+        assertThat(lifecycleService.findClient(CLIENT_KEY)).isNotEmpty();
+        assertThat(lifecycleService.findClient(CLIENT_KEY).get().getSharedSecret()).isEqualTo("new");
+    }
+
+    @Test
+    @Transactional
+    @Rollback(true)
+    public void testIfPluginIsReinstalledAndSecondRequestHasFakeJwtToken() throws Exception {
+        assertThat(lifecycleService.countClients()).isZero();
+        createInstalled(prepareDefaultRequestBuilder()
+                .sharedSecret(SHARED_SECRET)
+                .build());
+        final String newSharedSecret = "A_NEW_SHARED_SECRET";
+        createLifecycleRequest(LIFECYCLE_ENABLED_PATH, prepareDefaultRequestBuilder()
+                .sharedSecret(newSharedSecret)
+                .build(), Optional.of(newSharedSecret))
+                .then()
+                .statusCode(SC_UNAUTHORIZED);
+        assertThat(lifecycleService.countClients())
+                .isEqualTo(1);
+        assertThat(lifecycleService.findClient(CLIENT_KEY).get().getSharedSecret()).isEqualTo(SHARED_SECRET);
     }
 
     @Test
@@ -128,24 +148,29 @@ public class LifecycleResourceTest {
         assertThat(lifecycleService.isInstalled(CLIENT_KEY)).isTrue();
         assertThat(lifecycleService.isEnabled(CLIENT_KEY)).isFalse();
 
-        createLifecycleRequest(LIFECYCLE_ENABLED_PATH, preparedRequest, true);
+        createLifecycleRequest(LIFECYCLE_ENABLED_PATH, preparedRequest);
         assertThat(lifecycleService.isEnabled(CLIENT_KEY)).isTrue();
 
-        createLifecycleRequest(LIFECYCLE_DISABLED_PATH, preparedRequest, true);
+        createLifecycleRequest(LIFECYCLE_DISABLED_PATH, preparedRequest);
         assertThat(lifecycleService.isEnabled(CLIENT_KEY)).isFalse();
 
-        createLifecycleRequest(LIFECYCLE_UNINSTALLED_PATH, preparedRequest, true);
+        createLifecycleRequest(LIFECYCLE_UNINSTALLED_PATH, preparedRequest);
         assertThat(lifecycleService.isInstalled(CLIENT_KEY)).isFalse();
     }
 
     private MockMvcResponse createInstalled(LifecycleRequestMock request) {
-        return createLifecycleRequest(LIFECYCLE_INSTALLED_PATH, request, true);
+        return createLifecycleRequest(LIFECYCLE_INSTALLED_PATH, request);
     }
 
-    private MockMvcResponse createLifecycleRequest(String resourcePath, LifecycleRequestMock request, boolean shouldAddJwtToken) {
+    private MockMvcResponse createLifecycleRequest(String resourcePath, LifecycleRequestMock request) {
+        return createLifecycleRequest(resourcePath, request, Optional.of(SHARED_SECRET));
+    }
+
+    private MockMvcResponse createLifecycleRequest(String resourcePath, LifecycleRequestMock request, Optional<String> sharedSecret) {
         final CanonicalHttpRequest canonicalHttpRequest = new CanonicalHttpUriRequest("POST", resourcePath, BASE_URL);
-        final String jwtToken = jwtService.prepareJwtToken(CLIENT_KEY, SHARED_SECRET, canonicalHttpRequest);
-        return (shouldAddJwtToken ? mockMvc().header("Authorization", "JWT " + jwtToken) : mockMvc())
+        return (sharedSecret.isPresent() ?
+                mockMvc().header("Authorization", String.format("JWT %s", jwtService.prepareJwtToken(CLIENT_KEY, sharedSecret.get(), canonicalHttpRequest)))
+                : mockMvc())
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(request)
                 .when()
