@@ -23,7 +23,7 @@ public class LifecycleService {
     }
 
     @Transactional
-    ClientInfoDto save(ClientInfoEntity newClientInfoEntity) {
+    ClientInfoDtoImpl save(ClientInfoEntity newClientInfoEntity) {
         final String clientKey = newClientInfoEntity.getClientKey();
         final ClientInfoEntity lifecycleEntity = clientInfoRepository.findByClientKey(clientKey);
         if (lifecycleEntity != null) {

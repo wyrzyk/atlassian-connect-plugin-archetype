@@ -52,7 +52,7 @@ class ClientInfoEntity {
                 .build();
     }
 
-    ClientInfoDto toDto() {
+    ClientInfoDtoImpl toDto() {
         return ClientInfoDtoImpl.builder()
                 .id(this.getId())
                 .baseUrl(this.getBaseUrl())

@@ -1,8 +1,6 @@
 package wyrzyk.archetypes.api;
 
 public interface ClientInfoDto {
-    Long getId();
-
     String getClientKey();
 
     String getBaseUrl();

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import wyrzyk.archetypes.api.ClientInfoDto;
 
 import static wyrzyk.archetypes.lifecycle.ClientInfoEntity.fromDto;
 
@@ -22,7 +21,7 @@ class LifecycleResource {
 
     @RequestMapping(value = "installed")
     public ResponseEntity<Void> installed(@RequestBody ClientInfoRequest clientInfoRequest) {
-        final ClientInfoDto lifecycleDto = lifecycleService.save(fromDto(clientInfoRequest.toDto()));
+        final ClientInfoDtoImpl lifecycleDto = lifecycleService.save(fromDto(clientInfoRequest.toDto()));
         if (lifecycleDto.getId() != null) {   // todo: fix error handling
             return ResponseEntity.ok().build();
         } else {
