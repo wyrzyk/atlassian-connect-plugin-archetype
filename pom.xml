@@ -213,6 +213,12 @@
             <version>1.9.5</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>joor</artifactId>
+            <version>0.9.5</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Jwt and dependencies -->
         <dependency>
             <groupId>com.atlassian.jwt</groupId>

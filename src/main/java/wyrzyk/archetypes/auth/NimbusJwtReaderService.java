@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NimbusJwtReaderService extends NimbusJwtReaderFactory {
+class NimbusJwtReaderService extends NimbusJwtReaderFactory {
 
     @Autowired
     public NimbusJwtReaderService(JwtIssuerValidator jwtIssuerValidator,

@@ -6,14 +6,14 @@ import com.atlassian.jwt.exception.JwtUnknownIssuerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import wyrzyk.archetypes.web.lifecycle.LifecycleService;
+import wyrzyk.archetypes.lifecycle.LifecycleService;
 
 import javax.annotation.Nonnull;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__({@Autowired}))
-public class JwtIssuerSharedSecretServiceImpl implements JwtIssuerSharedSecretService {
+class JwtIssuerSharedSecretServiceImpl implements JwtIssuerSharedSecretService {
     private final LifecycleService lifecycleService;
 
     @Override

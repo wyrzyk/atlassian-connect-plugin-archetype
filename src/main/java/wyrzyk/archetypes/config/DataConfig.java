@@ -14,9 +14,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "wyrzyk.archetypes.web")
+@EnableJpaRepositories(basePackages = "wyrzyk.archetypes.lifecycle")
 @EnableTransactionManagement
-public class DataConfig {
+class DataConfig {
 
     @Bean
     public EmbeddedDatabase h2() {
@@ -27,7 +27,7 @@ public class DataConfig {
     public AbstractEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setDataSource(h2());
-        entityManagerFactory.setPackagesToScan("wyrzyk.archetypes.web");
+        entityManagerFactory.setPackagesToScan("wyrzyk.archetypes.lifecycle");
         entityManagerFactory.getJpaPropertyMap().put("hibernate.hbm2ddl.auto", "create");
         entityManagerFactory.setPersistenceProvider(new HibernatePersistenceProvider());
         return entityManagerFactory;

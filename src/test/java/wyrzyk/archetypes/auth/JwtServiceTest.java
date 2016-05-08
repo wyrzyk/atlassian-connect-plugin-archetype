@@ -3,10 +3,13 @@ package wyrzyk.archetypes.auth;
 import com.atlassian.jwt.CanonicalHttpRequest;
 import com.atlassian.jwt.core.reader.NimbusJwtReaderFactory;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
+import org.joor.Reflect;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,12 +21,12 @@ public class JwtServiceTest {
 
     @Mock
     private NimbusJwtReaderFactory nimbusJwtReaderFactory;
-    private JwtService jwtService;
+    private JwtServiceProxy jwtService;
 
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
-        jwtService = new JwtService(nimbusJwtReaderFactory);
+        jwtService = Reflect.on(new JwtService(nimbusJwtReaderFactory)).as(JwtServiceProxy.class);
     }
 
     @Test
@@ -32,5 +35,13 @@ public class JwtServiceTest {
         final String jwtToken = jwtService.prepareJwtToken("client", SHARED_SECRET, request, 1462333265, 1462333445);
         assertThat(jwtToken).isEqualTo(
                 JWT_TOKEN);
+    }
+
+    interface JwtServiceProxy {
+        String prepareJwtToken(String clientKey, String sharedSecret, CanonicalHttpRequest canonicalHttpRequest);
+
+        Optional<String> extractIssuerUnverified(String jwtToken);
+
+        String prepareJwtToken(String clientKey, String sharedSecret, CanonicalHttpRequest canonicalHttpRequest, long issuedAt, long expiresAt);
     }
 }

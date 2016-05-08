@@ -1,10 +1,11 @@
-package wyrzyk.archetypes.web.lifecycle;
+package wyrzyk.archetypes.lifecycle;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import wyrzyk.archetypes.api.ClientInfoDto;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,7 +34,7 @@ class ClientInfoEntity {
     boolean installed;
     boolean enabled;
 
-    static ClientInfoEntity fromDto(ClientInfoDto lifecycleDto) {
+    static ClientInfoEntity fromDto(ClientInfoDtoImpl lifecycleDto) {
         return ClientInfoEntity.builder()
                 .id(lifecycleDto.getId())
                 .baseUrl(lifecycleDto.getBaseUrl())
@@ -52,7 +53,7 @@ class ClientInfoEntity {
     }
 
     ClientInfoDto toDto() {
-        return ClientInfoDto.builder()
+        return ClientInfoDtoImpl.builder()
                 .id(this.getId())
                 .baseUrl(this.getBaseUrl())
                 .clientKey(this.getClientKey())

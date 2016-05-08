@@ -1,6 +1,7 @@
-package wyrzyk.archetypes.filters;
+package wyrzyk.archetypes.api;
 
 import com.atlassian.jwt.core.http.JavaxJwtRequestExtractor;
+import com.atlassian.jwt.core.http.JwtRequestExtractor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
@@ -8,7 +9,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import wyrzyk.archetypes.auth.JwtAuthenticatorService;
 import wyrzyk.archetypes.auth.JwtService;
-import wyrzyk.archetypes.web.lifecycle.LifecycleService;
+import wyrzyk.archetypes.lifecycle.LifecycleService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +18,7 @@ import java.util.Optional;
 import static java.util.Optional.ofNullable;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
-public class JwtAuthenticationInterceptor implements HandlerInterceptor {
+class JwtAuthenticationInterceptor implements HandlerInterceptor {
     @Autowired
     private JwtAuthenticatorService jwtAuthenticator;
     @Autowired
@@ -58,7 +59,7 @@ public class JwtAuthenticationInterceptor implements HandlerInterceptor {
     }
 
     private Optional<String> extractJwtToken(HttpServletRequest request) {
-        final JavaxJwtRequestExtractor javaxJwtRequestExtractor = new JavaxJwtRequestExtractor();
+        final JwtRequestExtractor javaxJwtRequestExtractor = new JavaxJwtRequestExtractor();
         return ofNullable(javaxJwtRequestExtractor.extractJwt(request));
     }
 }

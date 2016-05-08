@@ -12,8 +12,8 @@ import com.atlassian.jwt.exception.JwtUserRejectedException;
 import com.atlassian.jwt.exception.JwtVerificationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import wyrzyk.archetypes.web.lifecycle.ClientInfoDto;
-import wyrzyk.archetypes.web.lifecycle.LifecycleService;
+import wyrzyk.archetypes.api.ClientInfoDto;
+import wyrzyk.archetypes.lifecycle.LifecycleService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

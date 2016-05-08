@@ -1,4 +1,4 @@
-package wyrzyk.archetypes.web.lifecycle;
+package wyrzyk.archetypes.api;
 
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -9,7 +9,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 import static org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST;
 import static wyrzyk.archetypes.auth.Constants.CLIENT_REQUEST_ATTRIBUTE;
 
-public class ClientInfoDtoResolver implements HandlerMethodArgumentResolver {
+class ClientInfoDtoResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
         return methodParameter.getParameterType().equals(ClientInfoDto.class);

@@ -1,11 +1,12 @@
-package wyrzyk.archetypes.web.lifecycle;
+package wyrzyk.archetypes.lifecycle;
 
 import lombok.Builder;
 import lombok.Value;
+import wyrzyk.archetypes.api.ClientInfoDto;
 
 @Value
 @Builder
-public class ClientInfoDto {
+class ClientInfoDtoImpl implements ClientInfoDto {
     Long id;
     String key;
     String clientKey;
@@ -19,4 +20,9 @@ public class ClientInfoDto {
     String serviceEntitlementNumber;
     boolean installed;
     boolean enabled;
+
+    @Override
+    public boolean isAcive() {
+        return installed && enabled;
+    }
 }

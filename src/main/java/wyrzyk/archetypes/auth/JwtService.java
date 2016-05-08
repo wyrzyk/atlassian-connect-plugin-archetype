@@ -32,7 +32,12 @@ public class JwtService {
         return prepareJwtToken(clientKey, sharedSecret, canonicalHttpRequest, issuedAt, expiresAt);
     }
 
-    public String prepareJwtToken(String clientKey, String sharedSecret, CanonicalHttpRequest canonicalHttpRequest, long issuedAt, long expiresAt) {
+    public Optional<String> extractIssuerUnverified(String jwtToken) {
+        return extractJwtUnverified(jwtToken)
+                .map(Jwt::getIssuer);
+    }
+
+    private String prepareJwtToken(String clientKey, String sharedSecret, CanonicalHttpRequest canonicalHttpRequest, long issuedAt, long expiresAt) {
 
         final JwtJsonBuilder jwtBuilder = new JsonSmartJwtJsonBuilder()
                 .issuedAt(issuedAt)
@@ -49,11 +54,6 @@ public class JwtService {
         final String jwtbuilt = jwtBuilder.build();
         return jwtWriterFactory.macSigningWriter(SigningAlgorithm.HS256,
                 sharedSecret).jsonToJwt(jwtbuilt);
-    }
-
-    public Optional<String> extractIssuerUnverified(String jwtToken) {
-        return extractJwtUnverified(jwtToken)
-                .map(Jwt::getIssuer);
     }
 
     private Optional<Jwt> extractJwtUnverified(String jwtToken) {

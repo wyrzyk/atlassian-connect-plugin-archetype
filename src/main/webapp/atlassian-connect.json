@@ -24,6 +24,9 @@
     ]
   },
   "lifecycle": {
-    "installed": "/lifecycle/installed"
+    "installed": "/lifecycle/installed",
+    "enabled": "/lifecycle/enabled",
+    "disabled": "/lifecycle/disabled",
+    "uninstalled": "/lifecycle/uninstalled"
   }
 }

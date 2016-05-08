@@ -5,6 +5,8 @@ import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.jayway.restassured.module.mockmvc.response.MockMvcResponse;
 import com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
 import org.hamcrest.Matchers;
+import org.joor.Reflect;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +17,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import wyrzyk.archetypes.api.ClientInfoDto;
 import wyrzyk.archetypes.auth.JwtService;
 import wyrzyk.archetypes.config.WebConfiguration;
-import wyrzyk.archetypes.web.lifecycle.LifecycleService;
+import wyrzyk.archetypes.lifecycle.LifecycleService;
 
 import java.util.Optional;
 
@@ -48,13 +51,20 @@ public class LifecycleResourceTest {
     @Autowired
     private JwtService jwtService;
 
+    private LifecycleServiceProxy lifecycleServiceProxy;
+
     public MockMvcRequestSpecification mockMvc() {
         return given().webAppContextSetup(webApplicationContext);
     }
 
+    @Before
+    public void before(){
+        lifecycleServiceProxy = Reflect.on(lifecycleService).as(LifecycleServiceProxy.class);
+    }
+
     @Test
     @Transactional
-    @Rollback(true)
+    @Rollback()
     public void testIfInstalledMethodReturns200or204() throws Exception {
         createInstalled(prepareDefaultRequestBuilder().build())
                 .then()
@@ -63,7 +73,7 @@ public class LifecycleResourceTest {
 
     @Test
     @Transactional
-    @Rollback(true)
+    @Rollback()
     public void instalationShouldFailWithoutAuthenticationHeader() throws Exception {
         createLifecycleRequest(LIFECYCLE_INSTALLED_PATH, prepareDefaultRequestBuilder().build(),
                 empty())
@@ -73,56 +83,56 @@ public class LifecycleResourceTest {
 
     @Test
     @Transactional
-    @Rollback(true)
+    @Rollback()
     public void testIfInitializePayloadSaved() throws Exception {
-        assertThat(lifecycleService.countClients()).isZero();
+        assertThat(lifecycleServiceProxy.countClients()).isZero();
         createInstalled(prepareDefaultRequestBuilder()
                 .clientKey("clientKey")
                 .build());
-        assertThat(lifecycleService.countClients())
+        assertThat(lifecycleServiceProxy.countClients())
                 .isEqualTo(1);
-        assertThat(lifecycleService.findClient("clientKey")).isNotEmpty();
+        assertThat(lifecycleServiceProxy.findClient("clientKey")).isNotEmpty();
     }
 
     @Test
     @Transactional
-    @Rollback(true)
+    @Rollback()
     public void testTwoPayloadsSaved() throws Exception {
-        assertThat(lifecycleService.countClients()).isZero();
+        assertThat(lifecycleServiceProxy.countClients()).isZero();
         createInstalled(prepareDefaultRequestBuilder()
                 .clientKey("1")
                 .build());
         createInstalled(prepareDefaultRequestBuilder()
                 .clientKey("2")
                 .build());
-        assertThat(lifecycleService.countClients())
+        assertThat(lifecycleServiceProxy.countClients())
                 .isEqualTo(2);
-        assertThat(lifecycleService.findClient("1")).isNotEmpty();
-        assertThat(lifecycleService.findClient("2")).isNotEmpty();
+        assertThat(lifecycleServiceProxy.findClient("1")).isNotEmpty();
+        assertThat(lifecycleServiceProxy.findClient("2")).isNotEmpty();
     }
 
     @Test
     @Transactional
-    @Rollback(true)
+    @Rollback()
     public void testIfPluginIsReinstalledAndSecondRequestHasProperJwtToken() throws Exception {
-        assertThat(lifecycleService.countClients()).isZero();
+        assertThat(lifecycleServiceProxy.countClients()).isZero();
         createInstalled(prepareDefaultRequestBuilder()
                 .sharedSecret(SHARED_SECRET)
                 .build());
         createInstalled(prepareDefaultRequestBuilder()
                 .sharedSecret("new")
                 .build());
-        assertThat(lifecycleService.countClients())
+        assertThat(lifecycleServiceProxy.countClients())
                 .isEqualTo(1);
-        assertThat(lifecycleService.findClient(CLIENT_KEY)).isNotEmpty();
-        assertThat(lifecycleService.findClient(CLIENT_KEY).get().getSharedSecret()).isEqualTo("new");
+        assertThat(lifecycleServiceProxy.findClient(CLIENT_KEY)).isNotEmpty();
+        assertThat(lifecycleServiceProxy.findClient(CLIENT_KEY).get().getSharedSecret()).isEqualTo("new");
     }
 
     @Test
     @Transactional
-    @Rollback(true)
+    @Rollback()
     public void testIfPluginIsReinstalledAndSecondRequestHasFakeJwtToken() throws Exception {
-        assertThat(lifecycleService.countClients()).isZero();
+        assertThat(lifecycleServiceProxy.countClients()).isZero();
         createInstalled(prepareDefaultRequestBuilder()
                 .sharedSecret(SHARED_SECRET)
                 .build());
@@ -132,30 +142,30 @@ public class LifecycleResourceTest {
                 .build(), Optional.of(newSharedSecret))
                 .then()
                 .statusCode(SC_UNAUTHORIZED);
-        assertThat(lifecycleService.countClients())
+        assertThat(lifecycleServiceProxy.countClients())
                 .isEqualTo(1);
-        assertThat(lifecycleService.findClient(CLIENT_KEY).get().getSharedSecret()).isEqualTo(SHARED_SECRET);
+        assertThat(lifecycleServiceProxy.findClient(CLIENT_KEY).get().getSharedSecret()).isEqualTo(SHARED_SECRET);
     }
 
     @Test
     @Transactional
-    @Rollback(true)
+    @Rollback()
     public void testWholeLifecycle() throws Exception {
-        assertThat(lifecycleService.countClients()).isZero();
+        assertThat(lifecycleServiceProxy.countClients()).isZero();
         final LifecycleRequestMock preparedRequest = prepareDefaultRequestBuilder()
                 .build();
         createInstalled(preparedRequest);
-        assertThat(lifecycleService.isInstalled(CLIENT_KEY)).isTrue();
-        assertThat(lifecycleService.isEnabled(CLIENT_KEY)).isFalse();
+        assertThat(lifecycleServiceProxy.isInstalled(CLIENT_KEY)).isTrue();
+        assertThat(lifecycleServiceProxy.isEnabled(CLIENT_KEY)).isFalse();
 
         createLifecycleRequest(LIFECYCLE_ENABLED_PATH, preparedRequest);
-        assertThat(lifecycleService.isEnabled(CLIENT_KEY)).isTrue();
+        assertThat(lifecycleServiceProxy.isEnabled(CLIENT_KEY)).isTrue();
 
         createLifecycleRequest(LIFECYCLE_DISABLED_PATH, preparedRequest);
-        assertThat(lifecycleService.isEnabled(CLIENT_KEY)).isFalse();
+        assertThat(lifecycleServiceProxy.isEnabled(CLIENT_KEY)).isFalse();
 
         createLifecycleRequest(LIFECYCLE_UNINSTALLED_PATH, preparedRequest);
-        assertThat(lifecycleService.isInstalled(CLIENT_KEY)).isFalse();
+        assertThat(lifecycleServiceProxy.isInstalled(CLIENT_KEY)).isFalse();
     }
 
     private MockMvcResponse createInstalled(LifecycleRequestMock request) {
@@ -191,5 +201,21 @@ public class LifecycleResourceTest {
                 .description("Atlassian JIRA at http://localhost:2990/jira")
                 .serviceEntitlementNumber("SEN-number")
                 .eventType("installed");
+    }
+
+    interface LifecycleServiceProxy {
+        Optional<ClientInfoDto> findClient(String clientKey);
+
+        ClientInfoDto save(ClientInfoDto clientInfoDto);
+
+        boolean setInstalled(String clientKey, boolean installed);
+
+        boolean setEnabled(String clientKey, boolean enabled);
+
+        boolean isEnabled(String clientKey);
+
+        boolean isInstalled(String clientKey);
+
+        long countClients();
     }
 }
