@@ -10,12 +10,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import wyrzyk.archetypes.api.AtlassianConnectUtils;
+import wyrzyk.ac.api.AtlassianConnectUtils;
 
 import java.util.List;
 
 @Configuration
-@ComponentScan("wyrzyk.archetypes")
+@ComponentScan("wyrzyk.ac")
 @Import(DataConfig.class)
 @EnableWebMvc
 public class WebConfiguration extends WebMvcConfigurerAdapter {

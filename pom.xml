@@ -105,6 +105,11 @@
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>wyrzyk.archetypes</groupId>
+            <artifactId>atlassian-connect-jwt-authentication-provider</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!--Spring Core dependencies-->
         <dependency>
             <groupId>org.springframework</groupId>
