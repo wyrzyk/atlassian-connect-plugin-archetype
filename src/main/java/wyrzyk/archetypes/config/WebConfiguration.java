@@ -1,5 +1,6 @@
 package wyrzyk.archetypes.config;
 
+import io.leansoft.ac.auth.jwt.api.AtlassianConnectAuthUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -10,12 +11,11 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import wyrzyk.ac.api.AtlassianConnectUtils;
 
 import java.util.List;
 
 @Configuration
-@ComponentScan("wyrzyk.ac")
+@ComponentScan("io.leansoft.ac.auth.jwt")
 @Import(DataConfig.class)
 @EnableWebMvc
 public class WebConfiguration extends WebMvcConfigurerAdapter {
@@ -33,11 +33,11 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(AtlassianConnectUtils.createClientDtoResolver());
+        argumentResolvers.add(AtlassianConnectAuthUtils.createClientDtoResolver());
     }
 
     @Bean
     public HandlerInterceptor jwtAuthenticationInterceptor() {
-        return AtlassianConnectUtils.createJwtAuthenticationInterceptor();
+        return AtlassianConnectAuthUtils.createJwtAuthenticationInterceptor();
     }
 }

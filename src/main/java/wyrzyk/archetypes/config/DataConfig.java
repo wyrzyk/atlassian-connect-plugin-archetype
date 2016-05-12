@@ -14,7 +14,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "wyrzyk.ac.lifecycle")
+@EnableJpaRepositories(basePackages = "io.leansoft.ac.auth.jwt.lifecycle")
 @EnableTransactionManagement
 class DataConfig {
 
@@ -27,7 +27,7 @@ class DataConfig {
     public AbstractEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactory.setDataSource(h2());
-        entityManagerFactory.setPackagesToScan("wyrzyk.ac.lifecycle");
+        entityManagerFactory.setPackagesToScan("io.leansoft.ac.auth.jwt.lifecycle");
         entityManagerFactory.getJpaPropertyMap().put("hibernate.hbm2ddl.auto", "create");
         entityManagerFactory.setPersistenceProvider(new HibernatePersistenceProvider());
         return entityManagerFactory;

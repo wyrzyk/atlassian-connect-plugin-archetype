@@ -106,8 +106,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>wyrzyk.archetypes</groupId>
-            <artifactId>atlassian-connect-jwt-authentication-provider</artifactId>
+            <groupId>io.leansoft</groupId>
+            <artifactId>atlassian-connect-java-authentication</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <!--Spring Core dependencies-->
@@ -277,6 +277,15 @@
                 <enabled>true</enabled>
                 <checksumPolicy>warn</checksumPolicy>
             </releases>
+        </repository>
+        <repository>
+            <id>sonatype-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
         </repository>
     </repositories>
 
